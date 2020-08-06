@@ -1,4 +1,4 @@
-# AI-plays-Brick-Breaker
+# AI-plays-Brick-Breaker [![CodeFactor](https://www.codefactor.io/repository/github/alihaiderrizvi/ai-plays-brick-breaker/badge)](https://www.codefactor.io/repository/github/alihaiderrizvi/ai-plays-brick-breaker)
 
 
 ## How to Run
