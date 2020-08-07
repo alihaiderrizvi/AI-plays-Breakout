@@ -1,4 +1,5 @@
 import pygame
+import math
 from constants import *
 
 # initialize pygame
@@ -26,6 +27,7 @@ def form_bricks():
     for col in range(30, 191, 40):
         for row in range(0, 801, 100):
             lst.append((row, col))
+    print(lst)
     return lst
 
 # display ball
@@ -49,6 +51,36 @@ def check_slider_collision(ballX, ballY, ballX_change, ballY_change, sliderX, sl
         ballY_change = -1 * ballY_change
     
     return ballY_change
+
+#checks collision with brick
+def check_brick_collision(ballX, ballY, ballX_change, ballY_change):
+    for a,b in brick_list:
+        #to do: change brick coordinate calculation for more precision
+        if a-50 < ballX < a+50 and b-50< ballY < b+50:
+            #delets the brick
+            brick_list.remove((a,b))
+
+            # magnitude of velocity
+            m = math.sqrt(ballX_change * ballX_change + ballY_change * ballY_change)
+
+            #[nx,ny] is the collision normal
+            nx = 0
+            ny = -1
+
+            #vx and vy are the normalized velocity (magnitude of 1)
+            vx = ballX_change/m
+            vy = ballY_change /m
+
+            #t is the cosine of the angle between v and n
+            t = vx * nx + vy * ny
+            if t > 0:
+                ballX_change -= 2*nx*m*t
+                ballY_change -= 2*ny*m*t
+
+    return ballX_change, ballY_change
+
+
+
 
 # initialize brick list
 brick_list = form_bricks()
@@ -85,7 +117,8 @@ while is_running: #game state
     ## basic collision - will change it later
     ballX_change, ballY_change = check_screen_collision(ballX, ballY, ballX_change, ballY_change)
     ballY_change = check_slider_collision(ballX, ballY, ballX_change, ballY_change, sliderX, sliderY)
-    #check_brick_collision() ## todo ##
+    ballX_change, ballY_change = check_brick_collision(ballX, ballY, ballX_change, ballY_change)
+
     
     
     # resetting position if slider goes out of screen
