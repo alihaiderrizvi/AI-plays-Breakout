@@ -1,6 +1,6 @@
 import pygame
 import math
-from constants import *
+from constants import icon_path, slider_path, ball_path, brick1_path, brick2_path, bg_path, icon, slider_img, ball_img, brick_img, bg, screen_size, caption, fill, is_running, sliderX, sliderY, sliderX_change, bgX, bgY, ballX, ballY, ballX_change, ballY_change
 
 # initialize pygame
 pygame.init()
