@@ -24,4 +24,3 @@ sliderX_change = 0
 bgX, bgY = (0, 0)
 ballX, ballY = (200, 250)
 ballX_change, ballY_change = 3, 3
-
