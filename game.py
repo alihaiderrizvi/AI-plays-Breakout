@@ -27,7 +27,7 @@ def form_bricks():
     for col in range(30, 191, 40):
         for row in range(0, 801, 100):
             lst.append((row, col))
-    print(lst)
+    
     return lst
 
 # display ball
@@ -47,10 +47,27 @@ def check_screen_collision(ballX, ballY, ballX_change, ballY_change):
 
 # check collision with slider
 def check_slider_collision(ballX, ballY, ballX_change, ballY_change, sliderX, sliderY):
-    if 525 <= ballY + 10 <= 530 and sliderX <= ballX + 20 <= sliderX + 140:
-        ballY_change = -1 * ballY_change
+    if 525 <= ballY + 10 <= 530:
+        if sliderX - 20 <= ballX <= sliderX + 24:
+            ballX_change = -5
+            ballY_change = -3
+        
+        elif sliderX + 25 <= ballX <= sliderX + 48:
+            ballX_change = -4
+            ballY_change = -3
+
+        elif sliderX + 49 <= ballX <= sliderX + 72:
+            ballY_change = -1 * ballY_change
+
+        elif sliderX + 73 <= ballX <= sliderX + 96:
+            ballX_change = 4
+            ballY_change = -3
+
+        elif sliderX + 97 <= ballX <= sliderX + 120:
+            ballX_change = 5
+            ballY_change = -3
     
-    return ballY_change
+    return ballX_change, ballY_change
 
 #checks collision with brick
 def check_brick_collision(ballX, ballY, ballX_change, ballY_change):
@@ -116,7 +133,7 @@ while is_running: #game state
 
     ## basic collision - will change it later
     ballX_change, ballY_change = check_screen_collision(ballX, ballY, ballX_change, ballY_change)
-    ballY_change = check_slider_collision(ballX, ballY, ballX_change, ballY_change, sliderX, sliderY)
+    ballX_change, ballY_change = check_slider_collision(ballX, ballY, ballX_change, ballY_change, sliderX, sliderY)
     ballX_change, ballY_change = check_brick_collision(ballX, ballY, ballX_change, ballY_change)
 
     
