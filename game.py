@@ -27,7 +27,7 @@ def form_bricks():
     for col in range(30, 191, 40):
         for row in range(0, 801, 100):
             lst.append((row, col))
-    
+    print(lst)
     return lst
 
 # display ball
@@ -81,7 +81,7 @@ def check_slider_collision(ballX, ballY, ballX_change, ballY_change, sliderX, sl
 def check_brick_collision(ballX, ballY, ballX_change, ballY_change):
     for a,b in brick_list:
         #to do: change brick coordinate calculation for more precision
-        if a-50 < ballX < a+50 and b-50< ballY < b+50:
+        if a <= ballX < a+100 and b <= ballY <= b+40:
             #delets the brick
             brick_list.remove((a,b))
 
