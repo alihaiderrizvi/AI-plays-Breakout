@@ -48,7 +48,11 @@ def check_screen_collision(ballX, ballY, ballX_change, ballY_change):
 # check collision with slider
 def check_slider_collision(ballX, ballY, ballX_change, ballY_change, sliderX, sliderY):
     if 525 <= ballY + 10 <= 530:
-        if sliderX - 20 <= ballX <= sliderX + 24:
+        if sliderX - 20 <= ballX <= sliderX:
+            ballX_change = -6
+            ballY_change = -2
+
+        elif sliderX + 1 <= ballX <= sliderX + 24:
             ballX_change = -5
             ballY_change = -3
         
@@ -66,6 +70,10 @@ def check_slider_collision(ballX, ballY, ballX_change, ballY_change, sliderX, sl
         elif sliderX + 97 <= ballX <= sliderX + 120:
             ballX_change = 5
             ballY_change = -3
+        
+        elif sliderX + 121 <= ballX <= sliderX + 140:
+            ballX_change = 6
+            ballY_change = -2
     
     return ballX_change, ballY_change
 
