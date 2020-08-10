@@ -88,9 +88,16 @@ def check_brick_collision(ballX, ballY, ballX_change, ballY_change):
             # magnitude of velocity
             m = math.sqrt(ballX_change * ballX_change + ballY_change * ballY_change)
 
-            #[nx,ny] is the collision normal
-            nx = 0
-            ny = -1
+            #[nx,ny] is the collision normal  
+            if ballY_change < 0:
+                nx = 0
+                ny = -1
+            elif ballX_change < 0:
+                nx = -1
+                ny = 0
+            elif ballX_change > 0:
+                nx = 1
+                ny = 0
 
             #vx and vy are the normalized velocity (magnitude of 1)
             vx = ballX_change/m
@@ -103,7 +110,6 @@ def check_brick_collision(ballX, ballY, ballX_change, ballY_change):
                 ballY_change -= 2*ny*m*t
 
     return ballX_change, ballY_change
-
 
 
 
