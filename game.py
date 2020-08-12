@@ -1,6 +1,6 @@
 import pygame
 import math
-from constants import icon_path, slider_path, ball_path, brick1_path, brick2_path, bg_path, icon, slider_img, ball_img, brick_img, bg, screen_size, caption, fill, is_running, sliderX, sliderY, sliderX_change, bgX, bgY, ballX, ballY, ballX_change, ballY_change
+from constants import icon_path, slider_path, ball_path, brick1_path, brick2_path, bg_path, icon, slider_img, ball_img, brick1_img, brick2_img, brick3_img, brick4_img, brick5_img, brick6_img, brick7_img, brick8_img, bg, screen_size, caption, fill, is_running, sliderX, sliderY, sliderX_change, bgX, bgY, ballX, ballY, ballX_change, ballY_change
 
 # initialize pygame
 pygame.init()
@@ -18,16 +18,36 @@ def slider(x,y):
 
 # display bricks
 def bricks(brick_list):
-    for brick_pos in brick_list:
-        screen.blit(brick_img, brick_pos)
+    for brick_pos, img in brick_list:
+        screen.blit(img, brick_pos)
 
 # create list of bricks
 def form_bricks():
     lst = []
     for col in range(30, 191, 40):
-        for row in range(0, 801, 100):
+        for row in range(0, 701, 100):
             lst.append((row, col))
+    
+    for i in range(len(lst)):
+        if i in (0,8,16,24,32):
+            lst[i] = (lst[i], brick1_img)
+        elif i in (1,9,17,25,33):
+            lst[i] = (lst[i], brick2_img)
+        elif i in (2,10,18,26,34):
+            lst[i] = (lst[i], brick3_img)
+        elif i in (3,11,19,27,35):
+            lst[i] = (lst[i], brick4_img)
+        elif i in (4,12,20,28,36):
+            lst[i] = (lst[i], brick5_img)
+        elif i in (5,13,21,29,37):
+            lst[i] = (lst[i], brick6_img)
+        elif i in (6,14,22,30,38):
+            lst[i] = (lst[i], brick7_img)
+        elif i in (7,15,23,31,39):
+            lst[i] = (lst[i], brick8_img)
+    
     print(lst)
+    print(len(lst))
     return lst
 
 # display ball
@@ -37,9 +57,9 @@ def ball(x,y):
 # check collision with screen boundaries
 def check_screen_collision(ballX, ballY, ballX_change, ballY_change):
     if ballY < 0:
-        ballY_change = 3
+        ballY_change = -1 * ballY_change
     if ballX < 0:
-        ballX_change = 3
+        ballX_change = -1 * ballX_change
     if ballX > 785:
         ballX_change = -1 * ballX_change
 
@@ -79,11 +99,11 @@ def check_slider_collision(ballX, ballY, ballX_change, ballY_change, sliderX, sl
 
 #checks collision with brick
 def check_brick_collision(ballX, ballY, ballX_change, ballY_change):
-    for a,b in brick_list:
+    for pos, img in brick_list:
         #to do: change brick coordinate calculation for more precision
-        if a <= ballX < a+100 and b <= ballY <= b+40:
+        if pos[0] <= ballX < pos[0]+100 and pos[1] <= ballY <= pos[1]+40:
             #delets the brick
-            brick_list.remove((a,b))
+            brick_list.remove((pos, img))
 
             # magnitude of velocity
             m = math.sqrt(ballX_change * ballX_change + ballY_change * ballY_change)
