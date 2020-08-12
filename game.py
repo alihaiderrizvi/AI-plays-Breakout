@@ -28,7 +28,7 @@ def form_bricks():
         for row in range(0, 701, 100):
             lst.append((row, col))
     
-    for i in range(len(lst)):
+    for i,_ in enumerate(lst):
         if i in (0,8,16,24,32):
             lst[i] = (lst[i], brick1_img)
         elif i in (1,9,17,25,33):
