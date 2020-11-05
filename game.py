@@ -1,9 +1,21 @@
 import pygame
 import math
+import matplotlib.pyplot as plt
+import numpy as np
 from constants import icon_path, slider_path, ball_path, brick1_path, brick2_path, bg_path, icon, slider_img, ball_img, brick1_img, brick2_img, brick3_img, brick4_img, brick5_img, brick6_img, brick7_img, brick8_img, bg, screen_size, caption, fill, is_running, sliderX, sliderY, sliderX_change, bgX, bgY, ballX, ballY, ballX_change, ballY_change
 
 # initialize pygame
 pygame.init()
+pygame.font.init()
+
+# set fint style and size
+font = pygame.font.SysFont('Comic Sans MS', 20)
+
+# initialize win and loss counts
+win_count = 0
+loss_count = 0
+wins = font.render('WINS: '+str(win_count), False, (255, 255, 255))
+losses = font.render('LOSSES: '+str(loss_count), False, (255, 255, 255))
 
 # create screen
 screen = pygame.display.set_mode(screen_size)
@@ -46,8 +58,6 @@ def form_bricks():
         elif i in (7,15,23,31,39):
             lst[i] = (lst[i], brick8_img)
     
-    print(lst)
-    print(len(lst))
     return lst
 
 # display ball
@@ -60,7 +70,7 @@ def check_screen_collision(ballX, ballY, ballX_change, ballY_change):
         ballY_change = -1 * ballY_change
     if ballX < 0:
         ballX_change = -1 * ballX_change
-    if ballX > 785:
+    if ballX + 20 > 800:
         ballX_change = -1 * ballX_change
 
     return ballX_change, ballY_change
@@ -72,33 +82,33 @@ def check_slider_collision(ballX, ballY, ballX_change, ballY_change, sliderX, sl
             ballX_change = -6
             ballY_change = -2
 
-        elif sliderX + 1 <= ballX <= sliderX + 24:
+        elif sliderX + 1 <= ballX <= sliderX + 20:
             ballX_change = -5
             ballY_change = -3
         
-        elif sliderX + 25 <= ballX <= sliderX + 48:
+        elif sliderX + 21 <= ballX <= sliderX + 50:
             ballX_change = -4
             ballY_change = -3
 
-        elif sliderX + 49 <= ballX <= sliderX + 72:
+        elif sliderX + 51 <= ballX <= sliderX + 80:
             ballY_change = -1 * ballY_change
 
-        elif sliderX + 73 <= ballX <= sliderX + 96:
+        elif sliderX + 81 <= ballX <= sliderX + 110:
             ballX_change = 4
             ballY_change = -3
 
-        elif sliderX + 97 <= ballX <= sliderX + 120:
+        elif sliderX + 111 <= ballX <= sliderX + 130:
             ballX_change = 5
             ballY_change = -3
         
-        elif sliderX + 121 <= ballX <= sliderX + 140:
+        elif sliderX + 131 <= ballX <= sliderX + 150:
             ballX_change = 6
             ballY_change = -2
     
     return ballX_change, ballY_change
 
 #checks collision with brick
-def check_brick_collision(ballX, ballY, ballX_change, ballY_change):
+def check_brick_collision(ballX, ballY, ballX_change, ballY_change, brick_list):
     for pos, img in brick_list:
         #to do: change brick coordinate calculation for more precision
         if pos[0] <= ballX < pos[0]+100 and pos[1] <= ballY <= pos[1]+40:
@@ -106,7 +116,7 @@ def check_brick_collision(ballX, ballY, ballX_change, ballY_change):
             brick_list.remove((pos, img))
 
             # magnitude of velocity
-            m = math.sqrt(ballX_change * ballX_change + ballY_change * ballY_change)
+            m = math.sqrt(ballX_change**2 + ballY_change**2)
 
             #[nx,ny] is the collision normal  
             if ballY_change < 0:
@@ -131,54 +141,94 @@ def check_brick_collision(ballX, ballY, ballX_change, ballY_change):
 
     return ballX_change, ballY_change
 
+# move slider left
+def move_left(sliderX_change):
+    return sliderX_change - 4
 
+# move slider right
+def move_right(sliderX_change):
+    return sliderX_change + 4
 
-# initialize brick list
-brick_list = form_bricks()
+# display win and loss count
+def display_counts():
+    screen.blit(wins, (0,570))
+    screen.blit(losses, (150,570))
 
-# game loop
-while is_running: #game state
+def play(win_count, loss_count):
+    from constants import is_running, ballX, ballY, ballX_change, ballY_change, sliderX, sliderY, sliderX_change
+    
+    # initialize brick list
+    brick_list = form_bricks()
 
-    # set background color
-    screen.fill(fill) # (Red, Green, Blue)
-    screen.blit(bg, (bgX, bgY))
-    for event in pygame.event.get():
-        # check game quit
-        if event.type == pygame.QUIT:
-            is_running = False
-        
-        
-        if event.type == pygame.KEYDOWN:
-            # check left
-            if event.key == pygame.K_LEFT:
-                sliderX_change = -4
+    # game loop
+    while is_running: #game state
+
+        # set background color
+        screen.fill(fill) # (Red, Green, Blue)
+        screen.blit(bg, (bgX, bgY))
+
+        # display counts
+        display_counts()
+
+        for event in pygame.event.get():
+            # check game quit
+            if event.type == pygame.QUIT:
+                is_running = False
+                return 'end'
             
-            # check right
-            if event.key == pygame.K_RIGHT:
-                sliderX_change = 4
-        
-        if event.type == pygame.KEYUP:
-            if (event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT):
-                 sliderX_change = 0
-        
-    sliderX += sliderX_change
-    ballX += ballX_change
-    ballY += ballY_change
+            
+            if event.type == pygame.KEYDOWN:
+                # check left
+                if event.key == pygame.K_LEFT:
+                    sliderX_change = move_left(sliderX_change)
+                
+                # check right
+                if event.key == pygame.K_RIGHT:
+                    sliderX_change = move_right(sliderX_change)
+            
+            if event.type == pygame.KEYUP:
+                if (event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT):
+                    sliderX_change = 0
+            
+        sliderX += sliderX_change
+        ballX += ballX_change
+        ballY += ballY_change
 
-    ## basic collision - will change it later
-    ballX_change, ballY_change = check_screen_collision(ballX, ballY, ballX_change, ballY_change)
-    ballX_change, ballY_change = check_slider_collision(ballX, ballY, ballX_change, ballY_change, sliderX, sliderY)
-    ballX_change, ballY_change = check_brick_collision(ballX, ballY, ballX_change, ballY_change)
+        ## basic collision - will change it later
+        ballX_change, ballY_change = check_screen_collision(ballX, ballY, ballX_change, ballY_change)
+        ballX_change, ballY_change = check_slider_collision(ballX, ballY, ballX_change, ballY_change, sliderX, sliderY)
+        ballX_change, ballY_change = check_brick_collision(ballX, ballY, ballX_change, ballY_change, brick_list)
 
-    
-    
-    # resetting position if slider goes out of screen
-    if sliderX < 0:
-        sliderX = 0
-    elif sliderX >= 680:
-        sliderX = 680
-    
-    slider(sliderX, sliderY) # display slider
-    bricks(brick_list) # display bricks
-    ball(ballX, ballY) # display ball
-    pygame.display.update() # updating screen
+        
+        
+        # resetting position if slider goes out of screen
+        if sliderX < 0:
+            sliderX = 0
+        elif sliderX >= 680:
+            sliderX = 680
+        
+        slider(sliderX, sliderY) # display slider
+        bricks(brick_list) # display bricks
+        ball(ballX, ballY) # display ball
+        pygame.display.update() # updating screen
+
+        if not brick_list:
+            return 'win'
+        
+        if ballY > 800:
+            return 'loss'
+
+while True:
+    result = play(win_count, loss_count)
+    if result == 'win':
+        win_count += 1
+        wins = font.render('WINS: '+str(win_count), False, (255, 255, 255))
+    if result == 'loss':
+        # screen_data = pygame.surfarray.array3d(screen)
+        # screen_data = screen_data.swapaxes(0,1)
+        # plt.imshow(screen_data)
+        # plt.show()
+        loss_count += 1
+        losses = font.render('LOSSES: '+str(loss_count), False, (255, 255, 255))
+    if result == 'end':
+        break
