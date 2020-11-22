@@ -38,3 +38,5 @@ sliderX_change = 0
 bgX, bgY = (0, 0)
 ballX, ballY = (200, 250)
 ballX_change, ballY_change = 3, 3
+frame_count = 0
+rgb_weights = [0.2989, 0.5870, 0.1140]

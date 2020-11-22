@@ -2,7 +2,9 @@ import pygame
 import math
 import matplotlib.pyplot as plt
 import numpy as np
-from constants import icon_path, slider_path, ball_path, brick1_path, brick2_path, bg_path, icon, slider_img, ball_img, brick1_img, brick2_img, brick3_img, brick4_img, brick5_img, brick6_img, brick7_img, brick8_img, bg, screen_size, caption, fill, is_running, sliderX, sliderY, sliderX_change, bgX, bgY, ballX, ballY, ballX_change, ballY_change
+from constants import icon_path, slider_path, ball_path, brick1_path, brick2_path, bg_path, icon, slider_img, ball_img, brick1_img, brick2_img, brick3_img, brick4_img, brick5_img, brick6_img, brick7_img, brick8_img, bg, screen_size, caption, fill, is_running, sliderX, sliderY, sliderX_change, bgX, bgY, ballX, ballY, ballX_change, ballY_change, frame_count
+from PIL import Image
+import time
 
 # initialize pygame
 pygame.init()
@@ -154,15 +156,27 @@ def display_counts():
     screen.blit(wins, (0,570))
     screen.blit(losses, (150,570))
 
+def deal_with_image(snap, frame_count, rgb_weights):
+    snap = np.dot(snap, rgb_weights).astype(int) #convert to grayscale
+    snap = snap.reshape((1, 80, 10, 60, 10)).max(4).max(2)[0] #resize
+    snap = Image.fromarray(snap).convert('LA')
+    snap.save('snap' + str(frame_count//30)+ '.png', 'PNG')
+
 def play(win_count, loss_count):
-    from constants import is_running, ballX, ballY, ballX_change, ballY_change, sliderX, sliderY, sliderX_change
-    
+    from constants import is_running, ballX, ballY, ballX_change, ballY_change, sliderX, sliderY, sliderX_change, rgb_weights
+    global frame_count
     # initialize brick list
     brick_list = form_bricks()
-
+    
+    
     # game loop
     while is_running: #game state
+        frame_count += 1
 
+        if frame_count%30 == 0:
+            snap = pygame.surfarray.array3d(pygame.display.get_surface())
+            deal_with_image(snap, frame_count, rgb_weights)
+        
         # set background color
         screen.fill(fill) # (Red, Green, Blue)
         screen.blit(bg, (bgX, bgY))
@@ -224,10 +238,6 @@ while True:
         win_count += 1
         wins = font.render('WINS: '+str(win_count), False, (255, 255, 255))
     if result == 'loss':
-        # screen_data = pygame.surfarray.array3d(screen)
-        # screen_data = screen_data.swapaxes(0,1)
-        # plt.imshow(screen_data)
-        # plt.show()
         loss_count += 1
         losses = font.render('LOSSES: '+str(loss_count), False, (255, 255, 255))
     if result == 'end':
