@@ -11,8 +11,8 @@ class slider:
         self.x += x
         if self.x < 0:
             self.x = 0
-        elif self.x >= 860:
-            self.x = 680
+        elif self.x >= 670:
+            self.x = 670
 
     def action(self, action=1):
         if action == 0: ## move left
