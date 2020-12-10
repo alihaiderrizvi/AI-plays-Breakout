@@ -104,10 +104,10 @@ class Agent(object):
         self.terminal_memory[index] = 1 - terminal
         self.mem_cntr += 1
 
-    def choose_action(self, state):
+    def choose_action(self, state, ideal):
         rand = np.random.random()
         if rand < self.epsilon:
-            action = np.random.choice(self.action_space)
+            action = ideal
         else:
             actions = self.q_eval.sess.run(self.q_eval.Q_values,
                       feed_dict={self.q_eval.input: state} )
@@ -148,9 +148,9 @@ class Agent(object):
                                    self.q_eval.actions: action_batch,
                                    self.q_eval.q_target: q_target})
 
-        if self.mem_cntr > 60000:#16000:
+        if self.mem_cntr > 15000:#16000:
             if self.epsilon > 0.05:
-                self.epsilon -= 4e-7
+                self.epsilon -= 0.00002
             elif self.epsilon <= 0.05:
                 self.epsilon = 0.05
 
